@@ -1,47 +1,50 @@
-
 #include <Servo.h>
 
-
+// Motor control pins
 const int leftMotor1 = 2;  
 const int leftMotor2 = 3;  
 const int rightMotor1 = 4; 
 const int rightMotor2 = 5; 
 
-
+// Line sensor pins
 const int leftSensor = A0;
 const int rightSensor = A1;
 
-
-Servo servo;
+// Threshold for detecting the black line
+const int threshold = 500; 
 
 void setup() {
+  // Configure motor control pins as outputs
   pinMode(leftMotor1, OUTPUT);
   pinMode(leftMotor2, OUTPUT);
   pinMode(rightMotor1, OUTPUT);
   pinMode(rightMotor2, OUTPUT);
 
-
-  servo.attach(9);  // Connect the servo to pin 9
-
+  // Configure sensor pins as inputs
   pinMode(leftSensor, INPUT);
   pinMode(rightSensor, INPUT);
 }
 
 void loop() {
+  // Read sensor values
   int leftSensorValue = analogRead(leftSensor);
   int rightSensorValue = analogRead(rightSensor);
 
-  if (leftSensorValue < 500 && rightSensorValue < 500) {
+  // Determine movement based on sensor readings
+  if (leftSensorValue < threshold && rightSensorValue < threshold) {
+    // Both sensors detect the black line
     moveForward();
-  } else if (leftSensorValue >= 500 && rightSensorValue < 500) {
+  } else if (leftSensorValue >= threshold && rightSensorValue < threshold) {
+    // Left sensor is off the line, turn right
     turnRight();
-  } else if (leftSensorValue < 500 && rightSensorValue >= 500) {
+  } else if (leftSensorValue < threshold && rightSensorValue >= threshold) {
+    // Right sensor is off the line, turn left
     turnLeft();
   } else {
+    // Both sensors are off the line, stop or search
     stopMotors();
   }
 }
-
 
 void moveForward() {
   digitalWrite(leftMotor1, HIGH);
